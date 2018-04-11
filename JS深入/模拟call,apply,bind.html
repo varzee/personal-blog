@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <title>模拟call,apply,bind</title>
+</head>
+
+<body>
+    <div></div>
+</body>
+
+<script>
+    let value = ''
+    function foo(a) {
+        console.log('a is' + a);
+        console.log('this value is' + this.value)
+        console.log('this =====>', this)
+        return 'OK';
+    };
+    let obj = {
+        value: 'varzee'
+    };
+    foo.call(obj, 'call');
+    foo.apply(obj, ['apply']);
+    console.log(foo.bind(obj)());
+    //模拟call
+    Function.prototype.call_copy = function (context) {
+        let args = [];
+        for (let i = 1; i < arguments.length; i++) {
+            args.push(arguments[i])
+        };
+        context.fn = this;
+        let result = context.fn(...args);
+        delete context.fn;
+        return result;
+    };
+    //模拟apply
+    Function.prototype.apply_copy = function (context, arr) {
+        let args = arr || [];
+        context.fn = this;
+        let result = context.fn(...args);
+        delete context.fn;
+        return result;
+    }
+    //模拟bind
+    Function.prototype.bind_copy = function (context) {
+        //1.返回一个函数  2.可传参
+        let args = [];
+        for (let i = 1; i < arguments.length; i++) {
+            args.push(arguments[i]);
+        }
+        let bind_method = this;
+        let temp = function () {
+            let result = bind_method.apply(context,args);
+            return result;
+        };
+        return temp;
+    }
+    foo.call_copy(obj, 'call');
+    foo.apply_copy(obj, ['apply']);
+    console.log(foo.bind_copy(obj)());
+</script>
+
+</html>
